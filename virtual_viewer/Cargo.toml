@@ -1,0 +1,12 @@
+[package]
+name = "led_matrix_zmq_virtual_viewer"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+led_matrix_zmq = { path = "../" }
+
+gfx = "0.18.2"
+ggez = "0.6.1"
+glam = { version = "0.19.0", features = ["mint"] }
+structopt = "0.3"

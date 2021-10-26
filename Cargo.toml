@@ -1,0 +1,13 @@
+[package]
+name = "led_matrix_zmq"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+zmq = "0.9.2"
+
+[workspace]
+members = [
+  "viewer",
+  "virtual_viewer"
+]
