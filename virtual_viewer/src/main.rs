@@ -1,6 +1,8 @@
 mod viewer;
 
 use std::clone::Clone;
+use std::fmt;
+use std::sync::Arc;
 use structopt::StructOpt;
 use led_matrix_zmq::server::{ZmqOpts, ZmqServer};
 
@@ -48,6 +50,7 @@ fn main() {
 
     let server = ZmqServer::new(opt.clone().into());
     let (server_handle, join_handle) = server.run_thread();
+    let server_handle = Arc::new(server_handle);
 
     viewer::run(
         viewer::ViewerOpts { scale: opt.scale },

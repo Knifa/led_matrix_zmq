@@ -58,12 +58,12 @@ impl ViewerState {
 
 impl EventHandler<ggez::GameError> for ViewerState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let zmq_msg = self.zmq_handle.rx.try_recv();
-        if zmq_msg.is_err() {
-            return Ok(());
-        }
+        let zmq_msg = match self.zmq_handle.rx.try_recv() {
+            Ok(m) => m,
+            Err(_) => return Ok(()),
+        };
 
-        match zmq_msg.unwrap() {
+        match zmq_msg {
             ZqmServerMessage::Frame(frame) => {
                 let rgba = frame
                     .chunks(3)
@@ -80,7 +80,8 @@ impl EventHandler<ggez::GameError> for ViewerState {
                 img.set_filter(graphics::FilterMode::Nearest);
 
                 self.frame = Some(img);
-            }
+            },
+            _ => (),
         }
 
         Ok(())
