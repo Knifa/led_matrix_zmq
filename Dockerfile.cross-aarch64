@@ -1,0 +1,15 @@
+FROM rustembedded/cross:aarch64-unknown-linux-gnu-0.2.1
+
+RUN dpkg --add-architecture arm64 && \
+    apt-get update && \
+    apt-get install --assume-yes \
+      libzmq5:arm64 \
+      libzmq3-dev:arm64
+
+RUN git clone --depth=1 https://github.com/hzeller/rpi-rgb-led-matrix.git && \
+    cd rpi-rgb-led-matrix && \
+    cd lib && \
+    CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ make && \
+    cp librgbmatrix.so.1 librgbmatrix.a /usr/lib/aarch64-linux-gnu/
+
+ENV PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig

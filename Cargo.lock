@@ -712,6 +712,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
+name = "embedded-graphics"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40a69991ceb896bd4810a0cf2bcc46fc94b7860573c71f965d8e5b3d66942fed"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "error-chain"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -764,6 +773,12 @@ name = "foreign-types-shared"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+
+[[package]]
+name = "gcc"
+version = "0.3.55"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f5f3913fa0bfe7ee1fd8248b6b9f42a5af4b9d65ec2dd2c3c26132b950ecfc2"
 
 [[package]]
 name = "getrandom"
@@ -914,9 +929,9 @@ dependencies = [
 
 [[package]]
 name = "glam"
-version = "0.19.0"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b8509e6791516e81c1a630d0bd7fbac36d2fa8712a9da8662e716b52d5051ca"
+checksum = "c2c626156a479bfb5a4362c43f5abadd700af33ebc8db068089d9cb92493d6ab"
 dependencies = [
  "mint",
 ]
@@ -1185,7 +1200,7 @@ version = "0.1.0"
 dependencies = [
  "gfx",
  "ggez",
- "glam 0.19.0",
+ "glam 0.20.0",
  "led_matrix_zmq",
  "structopt",
 ]
@@ -2035,6 +2050,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "rpi-led-matrix"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b27442bb974a0fa23b9e6d630490679c3020ac1037c229c666e144d09d883b5"
+dependencies = [
+ "clap",
+ "embedded-graphics",
+ "gcc",
+ "libc",
+]
+
+[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2526,6 +2553,11 @@ checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
 [[package]]
 name = "viewer"
 version = "0.1.0"
+dependencies = [
+ "clap",
+ "led_matrix_zmq",
+ "rpi-led-matrix",
+]
 
 [[package]]
 name = "walkdir"
