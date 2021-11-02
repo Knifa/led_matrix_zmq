@@ -6,7 +6,7 @@ use ggez::graphics::{self, Color};
 use ggez::{Context, ContextBuilder, GameResult};
 use glam::Vec2;
 
-use led_matrix_zmq::server::{ZmqHandle, ZqmServerMessage};
+use led_matrix_zmq::server::{ThreadedMatrixServerHandle, MatrixMessage};
 
 const VERT_SHADER: &str = include_str!("matrix.glslv");
 const FRAG_SHADER: &str = include_str!("matrix.glslf");
@@ -26,16 +26,16 @@ struct ViewerState {
     frame: Option<graphics::Image>,
     matrix_shader: graphics::Shader<MatrixPixelShader>,
     opts: ViewerOpts,
-    zmq_handle: Arc<ZmqHandle>,
+    zmq_handle: Arc<ThreadedMatrixServerHandle>,
 }
 
 impl ViewerState {
-    pub fn new(opts: ViewerOpts, zmq_handle: Arc<ZmqHandle>, ctx: &mut Context) -> GameResult<ViewerState> {
+    pub fn new(opts: ViewerOpts, zmq_handle: Arc<ThreadedMatrixServerHandle>, ctx: &mut Context) -> GameResult<ViewerState> {
         ggez::input::mouse::set_cursor_hidden(ctx, false);
 
         let mps: MatrixPixelShader = MatrixPixelShader {
-            width: zmq_handle.opts.width as f32,
-            height: zmq_handle.opts.height as f32,
+            width: zmq_handle.settings.width as f32,
+            height: zmq_handle.settings.height as f32,
         };
 
         let shader = graphics::Shader::from_u8(
@@ -64,7 +64,7 @@ impl EventHandler<ggez::GameError> for ViewerState {
         };
 
         match zmq_msg {
-            ZqmServerMessage::Frame(frame) => {
+            MatrixMessage::Frame(frame) => {
                 let rgba = frame
                     .chunks(3)
                     .flat_map(|chunk| [chunk[0], chunk[1], chunk[2], 255])
@@ -72,8 +72,8 @@ impl EventHandler<ggez::GameError> for ViewerState {
 
                 let mut img = graphics::Image::from_rgba8(
                     ctx,
-                    self.zmq_handle.opts.width as u16,
-                    self.zmq_handle.opts.height as u16,
+                    self.zmq_handle.settings.width as u16,
+                    self.zmq_handle.settings.height as u16,
                     &rgba,
                 )
                 .unwrap();
@@ -95,7 +95,7 @@ impl EventHandler<ggez::GameError> for ViewerState {
             let screen_center = Vec2::new(screen_coords.w / 2.0, screen_coords.h / 2.0);
 
             let largest_frame_dim =
-                self.zmq_handle.opts.width.max(self.zmq_handle.opts.height) as f32;
+                self.zmq_handle.settings.width.max(self.zmq_handle.settings.height) as f32;
             let largest_screen_dim = screen_coords.w.max(screen_coords.h) as f32;
             let scale = largest_screen_dim / largest_frame_dim;
 
@@ -114,13 +114,13 @@ impl EventHandler<ggez::GameError> for ViewerState {
     }
 }
 
-pub fn run(opts: ViewerOpts, zmq_handle: Arc<ZmqHandle>) {
+pub fn run(opts: ViewerOpts, zmq_handle: Arc<ThreadedMatrixServerHandle>) {
     let (mut ctx, event_loop) = ContextBuilder::new("Matrix Viewer", "")
         .window_mode(
             ggez::conf::WindowMode::default()
                 .dimensions(
-                    zmq_handle.opts.width as f32 * opts.scale,
-                    zmq_handle.opts.height as f32 * opts.scale,
+                    zmq_handle.settings.width as f32 * opts.scale,
+                    zmq_handle.settings.height as f32 * opts.scale,
                 )
         )
         .build()

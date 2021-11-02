@@ -21,10 +21,10 @@ void main() {
     float inner_y = fract(v_Uv.y * u_Height);
 
     float sin_blob = sin(inner_x * pi) * sin(inner_y * pi);
-    float blob_mask = smoothstep(0.75, 0.8, sin_blob);
+    float blob_mask = smoothstep(0.7, 0.75, sin_blob);
 
     vec3 tex = texture(t_Texture, v_Uv).rgb;
-    vec3 pix = tex * blob_mask;
+    vec3 pix = (tex * blob_mask) + (tex * (1.0 - blob_mask)) * 0.05;
 
     Target0 = vec4(pix, 1.0);
 }

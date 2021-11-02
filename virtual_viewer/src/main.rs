@@ -1,10 +1,9 @@
 mod viewer;
 
 use std::clone::Clone;
-use std::fmt;
 use std::sync::Arc;
 use structopt::StructOpt;
-use led_matrix_zmq::server::{ZmqOpts, ZmqServer};
+use led_matrix_zmq::server::{MatrixServerSettings, ThreadedMatrixServer};
 
 #[derive(Clone, Debug, StructOpt)]
 #[structopt(name = "led-matrix-zmq-virtual")]
@@ -34,9 +33,9 @@ impl Opt {
     }
 }
 
-impl Into<ZmqOpts> for Opt {
-    fn into(self) -> ZmqOpts {
-        ZmqOpts {
+impl Into<MatrixServerSettings> for Opt {
+    fn into(self) -> MatrixServerSettings {
+        MatrixServerSettings {
             bind_address: self.bind_address,
             width: self.width,
             height: self.height,
@@ -48,13 +47,14 @@ fn main() {
     let opt = Opt::from_args();
     opt.print_summary();
 
-    let server = ZmqServer::new(opt.clone().into());
-    let (server_handle, join_handle) = server.run_thread();
+    let mut server = ThreadedMatrixServer::new(&opt.clone().into());
+    let server_handle = server.handle();
     let server_handle = Arc::new(server_handle);
 
     viewer::run(
         viewer::ViewerOpts { scale: opt.scale },
         server_handle.clone(),
     );
-    join_handle.join().unwrap();
+
+    server.stop();
 }
