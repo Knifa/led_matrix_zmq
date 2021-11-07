@@ -1,5 +1,5 @@
 [package]
-name = "led_matrix_zmq_virtual_viewer"
+name = "virtual_viewer"
 version = "0.1.0"
 edition = "2018"
 

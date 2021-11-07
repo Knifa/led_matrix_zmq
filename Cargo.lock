@@ -1195,17 +1195,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "led_matrix_zmq_virtual_viewer"
-version = "0.1.0"
-dependencies = [
- "gfx",
- "ggez",
- "glam 0.20.0",
- "led_matrix_zmq",
- "structopt",
-]
-
-[[package]]
 name = "lewton"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2557,6 +2546,17 @@ dependencies = [
  "clap",
  "led_matrix_zmq",
  "rpi-led-matrix",
+]
+
+[[package]]
+name = "virtual_viewer"
+version = "0.1.0"
+dependencies = [
+ "gfx",
+ "ggez",
+ "glam 0.20.0",
+ "led_matrix_zmq",
+ "structopt",
 ]
 
 [[package]]
